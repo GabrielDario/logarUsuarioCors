@@ -3,11 +3,11 @@ import jwt from 'jsonwebtoken'
 
 const secret = process.env.SECRET
 
-const tarefas = async (req, res) => {
-    const { descricao, idTarefa, completed = false } = req.body
-    if (descricao && idTarefa) {
-        const tarefa = await Tarefa.create({ descricao, idTarefa, completed })
-        res.status(201).send({ message: "Tarefa cadastrado" })
+const cadTarefa = async (req, res) => {
+    const { descricao, idUsuario, completed = false } = req.body
+    if (descricao && idUsuario) {
+        const tarefa = await Tarefa.create({ descricao, idUsuario, completed })
+        res.status(201).send({ cadastrado: tarefa })
     } else {
         res.status(400).send({ message: "Favor informar descricao e idTarefa" })
     }
@@ -15,7 +15,6 @@ const tarefas = async (req, res) => {
 
 const getTarefas = async (req, res) => {
     try {
-        const { descricao, idTarefa, completed = false } = req.body
         const tarefa = await Tarefa.findAll()
         res.status(201).send({ tarefas: tarefa })
     } catch (erro) {
@@ -47,4 +46,4 @@ const deletar = async (req, res) => {
         res.status(400).send({ message: "Erro ao apagar" })
     }
 }
-export { tarefas, getTarefas, updateTarefas , deletar}
+export { cadTarefa, getTarefas, updateTarefas , deletar}

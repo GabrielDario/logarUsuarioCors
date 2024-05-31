@@ -10,7 +10,7 @@ const Tarefa = sequelize.define('Tarefa', {
     descricao: {
         type: DataTypes.STRING
     },
-    idTarefa : {
+    idUsuario : {
         type: DataTypes.INTEGER,
     },
     completed: {
