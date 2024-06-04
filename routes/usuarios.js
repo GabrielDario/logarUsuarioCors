@@ -5,13 +5,13 @@ import { cadUsuario } from '../controllers/usuario.js'
 import { cadTarefa,getTarefas ,updateTarefas,deletar} from '../controllers/tarefas.js'
 const router = express.Router()
 
-router.post('/cadUsuario' , cadUsuario)
-router.post('/cadTarefa' , cadTarefa)
-router.get('/tarefas' , getTarefas)
-router.put('/tarefas/:id' , updateTarefas)
-router.delete('/tarefas/:id' , deletar)
+router.post('/cadastro', cadUsuario)
+router.post('/tarefas' ,validarToken,  cadTarefa)
+router.get('/tarefas' ,validarToken ,  getTarefas)
+router.put('/tarefas/:id' , validarToken , updateTarefas)
+router.delete('/tarefa/:id' , validarToken , deletar)
 
 
-router.post('/login', validarToken, login)
+router.post('/login', login)
 
 export default router

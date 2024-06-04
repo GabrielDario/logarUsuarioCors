@@ -5,11 +5,12 @@ const segredo = process.env.SECRET
 
 const login = async (req, res) => {
     const { email, senha } = req.body
-    console.log(`${email} e ${senha}`)
     if (email && senha) {
         const login = await Usuario.findOne({ where: { email } })
         if (login && login?.senha == senha) {
-            res.status(201).send({ mensagem: "login realizado" })
+            const token = jwt.sign({id : login.id}, segredo, {expiresIn: "1d"})
+            
+            res.status(201).send({ mensagem: `login realizado ${token}` })
         } else {
             res.status(400).send({ mensagem: "Usuário Incorreto" })
         }

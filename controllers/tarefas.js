@@ -1,7 +1,4 @@
 import { Tarefa } from '../Model/Tarefa.js'
-import jwt from 'jsonwebtoken'
-
-const secret = process.env.SECRET
 
 const cadTarefa = async (req, res) => {
     const { descricao, idUsuario, completed = false } = req.body
@@ -15,22 +12,25 @@ const cadTarefa = async (req, res) => {
 
 const getTarefas = async (req, res) => {
     try {
-        const tarefa = await Tarefa.findAll()
+        let idUsuario = req.idUsuario
+        const tarefa = await Tarefa.findAll({ where : { idUsuario }})
         res.status(201).send({ tarefas: tarefa })
     } catch (erro) {
         res.status(400).send({ message: "Erro ao listar" })
     }
 }
 const updateTarefas = async (req, res) => {
-    const { id } = req.params
-    const { descricao, idTarefa, completed } = req.body
     try {
-        if (descricao && idTarefa && completed) {
-            const tarefa = await Tarefa.update({ descricao, idTarefa, completed }, { where: { id } })
-            const tarefas = await Tarefa.findAll()
-            res.status(201).send({ Atualizado: tarefas })
+        const { id } = req.params
+        const { completed =  true } = req.body
+        let idUsuario = req.idUsuario
+        const tarefa = await Tarefa.findOne({ where: { id } })
+        const tarefaId = tarefa.idUsuario
+        if (idUsuario == tarefaId) {
+            const tarefaAtualizado = await Tarefa.update({ completed }, { where: { id } })
+            res.status(201).send({ Atualizado: tarefaAtualizado })
         } else {
-            res.status(400).send({ MENSAGEM: 'ERRO AO ATUALIADO' })
+            res.status(400).send({ MENSAGEM: 'NÃO AUTORIZADO' })
         }
     } catch (erro) {
         res.status(400).send({ message: "Erro ao listar" })
@@ -40,8 +40,16 @@ const updateTarefas = async (req, res) => {
 const deletar = async (req, res) => {
     try {
         const { id } = req.params
-        const tarefa = await Tarefa.destroy({ where : {id }})
-        res.status(200).send({ MENSAGEM : "Tarefa apagada" })
+        let idUsuario = req.idUsuario
+
+        const tarefa = await Tarefa.findOne({ where: { id } })
+        const tarefaId = tarefa.idUsuario
+        if (idUsuario == tarefaId) {
+            const tarefaDeletada = await Tarefa.destroy({ where: { id } })
+            res.status(201).send({ Deletado: tarefaDeletada })
+        } else {
+            res.status(400).send({ MENSAGEM: 'NÃO AUTORIZADO' })
+        }
     } catch (erro) {
         res.status(400).send({ message: "Erro ao apagar" })
     }
