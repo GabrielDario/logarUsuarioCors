@@ -10,7 +10,7 @@ const login = async (req, res) => {
         if (login && login?.senha == senha) {
             const token = jwt.sign({id : login.id}, segredo, {expiresIn: "1d"})
             
-            res.status(201).send({ mensagem: `login realizado ${token}` })
+            res.status(201).send({ mensagem: `login realizado`, token })
         } else {
             res.status(400).send({ mensagem: "Usuário Incorreto" })
         }
